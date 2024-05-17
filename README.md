@@ -77,8 +77,8 @@ Make sure you have the following installed on your machine:
 **Cloning the Repository**
 
 ```bash
-git clone https://github.com/adrianhajdin/imaginify.git
-cd imaginify
+git clone https://github.com/adrianhajdin/ArabianRizz.git
+cd ArabianRizz
 ```
 
 **Installation**
@@ -1892,7 +1892,7 @@ export async function getAllImages({ limit = 9, page = 1, searchQuery = '' }: {
       secure: true,
     })
 
-    let expression = 'folder=imaginify';
+    let expression = 'folder=ArabianRizz';
 
     if (searchQuery) {
       expression += ` AND ${searchQuery}`
