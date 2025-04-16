@@ -29,7 +29,7 @@ export async function POST(req: Request) {
       status: 400,
     });
   }
-
+  console.log(headerPayload)
   // Get the body
   const payload = await req.json();
   const body = JSON.stringify(payload);
