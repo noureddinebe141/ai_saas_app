@@ -29,7 +29,11 @@ export async function POST(req: Request) {
       status: 400,
     });
   }
-  console.log(headerPayload)
+  console.log({
+    svix_id,
+    svix_timestamp,
+    svix_signature,
+  })
   // Get the body
   const payload = await req.json();
   const body = JSON.stringify(payload);
