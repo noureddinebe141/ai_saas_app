@@ -1,8 +1,4 @@
-Here’s a clean and professional `README.md` for your **Imaginify** project using the tech stack you mentioned (React, Next.js, Stripe, Cloudinary, Clerk):
 
----
-
-```markdown
 # Imaginify 🎨✨
 
 **Imaginify** is a modern web application that allows users to generate and enhance images with AI, manage their content securely, and access premium features through Stripe-based payments.
