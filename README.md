@@ -97,7 +97,3 @@ _(Include if available)_
 
 MIT License © 2025 Rushikesh Godase
 ```
-
----
-
-Would you like me to also generate a logo or landing page layout for Imaginify?
