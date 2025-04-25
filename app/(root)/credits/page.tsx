@@ -23,9 +23,9 @@ const Credits = async () => {
       />
 
       <section>
-        <ul className="credits-list">
+        <ul className="credits-list ">
           {plans.map((plan) => (
-            <li key={plan.name} className="credits-item">
+            <li key={plan.name} className="credits-item transform transition duration-300 ease-in-out hover:scale-105">
               <div className="flex-center flex-col gap-3">
                 <Image src={plan.icon} alt="check" width={50} height={50} />
                 <p className="p-20-semibold mt-2 text-purple-500">
@@ -56,7 +56,7 @@ const Credits = async () => {
               </ul>
 
               {plan.name === "Free" ? (
-                <Button variant="outline" className="credits-btn">
+                <Button variant="outline" className="credits-btn ">
                   Free Consumable
                 </Button>
               ) : (
