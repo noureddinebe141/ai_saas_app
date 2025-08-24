@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { currentUser } from "@clerk/nextjs/server";
 
 import User from "../database/models/user.model";
 import { connectToDatabase } from "../database/mongoose";
@@ -19,14 +20,28 @@ export async function createUser(user: CreateUserParams) {
   }
 }
 
-// READ
+// READ + AUTO CREATE IF NOT EXISTS
 export async function getUserById(userId: string) {
   try {
     await connectToDatabase();
 
-    const user = await User.findOne({ clerkId: userId });
+    let user = await User.findOne({ clerkId: userId });
 
-    if (!user) throw new Error("User not found");
+    if (!user) {
+      // جلب بيانات المستخدم من Clerk
+      const clerkUser = await currentUser();
+
+      if (!clerkUser) throw new Error("User not found in Clerk");
+
+      // إنشاء المستخدم الجديد في قاعدة البيانات
+      user = await User.create({
+        clerkId: clerkUser.id,
+        name: clerkUser.firstName || "Anonymous",
+        email: clerkUser.emailAddresses[0]?.emailAddress || "",
+        avatar: clerkUser.imageUrl,
+        creditBalance: 10, // رصيد افتراضي كبداية
+      });
+    }
 
     return JSON.parse(JSON.stringify(user));
   } catch (error) {
@@ -44,7 +59,7 @@ export async function updateUser(clerkId: string, user: UpdateUserParams) {
     });
 
     if (!updatedUser) throw new Error("User update failed");
-    
+
     return JSON.parse(JSON.stringify(updatedUser));
   } catch (error) {
     handleError(error);
@@ -80,11 +95,11 @@ export async function updateCredits(userId: string, creditFee: number) {
 
     const updatedUserCredits = await User.findOneAndUpdate(
       { _id: userId },
-      { $inc: { creditBalance: creditFee }},
+      { $inc: { creditBalance: creditFee } },
       { new: true }
-    )
+    );
 
-    if(!updatedUserCredits) throw new Error("User credits update failed");
+    if (!updatedUserCredits) throw new Error("User credits update failed");
 
     return JSON.parse(JSON.stringify(updatedUserCredits));
   } catch (error) {
