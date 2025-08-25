@@ -1,7 +1,6 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { currentUser } from "@clerk/nextjs/server";
 
 import User from "../database/models/user.model";
 import { connectToDatabase } from "../database/mongoose";
@@ -20,26 +19,20 @@ export async function createUser(user: CreateUserParams) {
   }
 }
 
-// READ + AUTO CREATE IF NOT EXISTS
+// READ
 export async function getUserById(userId: string) {
   try {
     await connectToDatabase();
 
     let user = await User.findOne({ clerkId: userId });
 
+    // ✅ لو المستخدم غير موجود ننشئه أوتوماتيكياً
     if (!user) {
-      // جلب بيانات المستخدم من Clerk
-      const clerkUser = await currentUser();
-
-      if (!clerkUser) throw new Error("User not found in Clerk");
-
-      // إنشاء المستخدم الجديد في قاعدة البيانات
       user = await User.create({
-        clerkId: clerkUser.id,
-        name: clerkUser.firstName || "Anonymous",
-        email: clerkUser.emailAddresses[0]?.emailAddress || "",
-        avatar: clerkUser.imageUrl,
-        creditBalance: 10, // رصيد افتراضي كبداية
+        clerkId: userId,
+        email: "unknown@example.com", // ممكن نستبدلها بـ بيانات من Clerk
+        username: "New User",
+        creditBalance: 10, // نعطيه رصيد افتراضي مثلاً
       });
     }
 
@@ -71,14 +64,12 @@ export async function deleteUser(clerkId: string) {
   try {
     await connectToDatabase();
 
-    // Find user to delete
     const userToDelete = await User.findOne({ clerkId });
 
     if (!userToDelete) {
       throw new Error("User not found");
     }
 
-    // Delete user
     const deletedUser = await User.findByIdAndDelete(userToDelete._id);
     revalidatePath("/");
 
